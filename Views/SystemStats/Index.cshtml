@@ -1,0 +1,64 @@
+@using SystemMonitor.Models
+@model SystemStats
+@{
+    ViewData["Title"] = "System Statistics";
+}
+
+<div class="container mt-4">
+    <h2>System Statistics</h2>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">CPU Usage</div>
+                        <div class="card-body">
+                            <h3><span id="cpuUsage">-</span>%</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">Memory Usage</div>
+                        <div class="card-body">
+                            <p>Total: <span id="totalMemory">-</span> MB</p>
+                            <p>Used: <span id="usedMemory">-</span> MB</p>
+                            <p>Available: <span id="availableMemory">-</span> MB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">System Uptime</div>
+                        <div class="card-body">
+                            <h4 id="uptime">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateStats() {
+            fetch('/SystemStats/GetStats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cpuUsage').textContent = data.cpuUsagePercentage.toFixed(2);
+                    document.getElementById('totalMemory').textContent = data.totalMemoryMB.toFixed(2);
+                    document.getElementById('usedMemory').textContent = data.usedMemoryMB.toFixed(2);
+                    document.getElementById('availableMemory').textContent = data.availableMemoryMB.toFixed(2);
+                    document.getElementById('uptime').textContent = data.uptime;
+                });
+        }
+
+        // Update stats every 5 seconds
+        setInterval(updateStats, 5000);
+        // Initial update
+        updateStats();
+    </script>
+} 
